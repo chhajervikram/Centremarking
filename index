@@ -1,0 +1,424 @@
+Here is an HTML document that adds client information at the top of every page, with proper alignment and persistent data entry.
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Vastu Planner - Client Info + Complete Features</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    :root { 
+      --primary: #c2410f; 
+      --primary-dark: #9c340c;
+      --bg: linear-gradient(135deg, #f8f1e3, #f5e8d3); 
+      --panel: #fffaf0; 
+      --border: #e5d5c0; 
+      --text: #111827;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); padding: 20px; min-height: 100vh; }
+    .container { max-width: 1600px; margin: 0 auto; background: white; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; }
+    
+    /* CLIENT INFO BAR - appears on top of all pages, consistent design */
+    .client-info-bar {
+      background: linear-gradient(135deg, #1e3a5f 0%, #0f2c4f 100%);
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 3px solid #ffb347;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .client-info-field {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      background: rgba(255,255,255,0.12);
+      padding: 6px 14px;
+      border-radius: 40px;
+      backdrop-filter: blur(2px);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .client-info-field label {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #ffd966;
+      font-size: 13px;
+    }
+    .client-info-field span {
+      color: white;
+      font-weight: 500;
+    }
+    .client-info-field input, .client-info-field select {
+      background: rgba(255,255,255,0.95);
+      border: none;
+      padding: 6px 12px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1e293b;
+      width: 150px;
+      outline: none;
+      transition: 0.2s;
+      font-family: 'Inter', monospace;
+    }
+    .client-info-field input:focus {
+      box-shadow: 0 0 0 2px #ffb347;
+      background: white;
+    }
+    .edit-client-btn {
+      background: #ffb347;
+      border: none;
+      color: #1e2a3a;
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 12px;
+    }
+    .edit-client-btn:hover {
+      background: #ffa01e;
+      transform: translateY(-1px);
+    }
+    .client-badge {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    @media (max-width: 1000px) {
+      .client-info-bar { flex-direction: column; align-items: stretch; }
+      .client-info-field { justify-content: space-between; }
+      .client-info-field input { width: 160px; }
+    }
+    
+    header { background: var(--primary); color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+    header h1 { font-size: 22px; margin: 0; }
+    .header-controls { display: flex; gap: 12px; flex-wrap: wrap; }
+    .header-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s; }
+    .header-btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-1px); }
+    .main { padding: 24px; display: grid; grid-template-columns: 1fr 420px; gap: 24px; align-items: start; }
+    .canvas-wrapper { position: relative; border: 3px solid var(--border); border-radius: 12px; background: var(--panel); overflow: auto; display: flex; justify-content: center; align-items: center; background: #faf5e8; }
+    canvas { display: block; cursor: crosshair; background: #faf5e8; width: auto; height: auto; max-width: 100%; max-height: 70vh; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; padding: 10px; background: #fef7e0; border-radius: 12px; }
+    .tool-btn { padding: 8px 12px; border: none; border-radius: 6px; font-weight: 500; font-size: 13px; cursor: pointer; background: white; border: 1px solid var(--border); transition: all 0.2s; }
+    .tool-btn:hover, .tool-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .button-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+    button { padding: 10px 16px; border: none; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; flex: 1; min-width: 120px; transition: all 0.2s; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-secondary { background: #f4e6d0; color: #222; }
+    .btn-secondary:hover { background: #ead6b7; transform: translateY(-1px); }
+    .btn-danger { background: #fee2e2; color: #991b1b; }
+    .btn-danger:hover { background: #fecaca; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #059669; }
+    .right-panel { max-height: 85vh; overflow-y: auto; padding-right: 5px; }
+    .right-panel::-webkit-scrollbar { width: 4px; }
+    .info-box { background: var(--panel); border: 2px solid var(--border); border-radius: 12px; padding: 16px; font-size: 14px; margin-bottom: 16px; }
+    .status { padding: 8px 16px; background: #ecfdf5; color: var(--success); border-radius: 20px; font-weight: 500; display: inline-block; margin-bottom: 15px; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #ddd; }
+    input[type="number"], input[type="range"], input[type="color"], select { width: 100%; padding: 6px; border: 1px solid #d4c2a8; border-radius: 4px; font-size: 12px; }
+    .small-note { color: #666; display: block; margin-top: 4px; font-size: 11px; }
+    .layer-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 12px 20px; border-radius: 8px; z-index: 10000; animation: slideIn 0.3s ease; font-size: 13px; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .export-progress { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 24px; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 10002; text-align: center; min-width: 320px; }
+    .progress-bar { width: 100%; height: 6px; background: #e5e7eb; border-radius: 3px; margin-top: 15px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; }
+    hr { margin: 15px 0; border-color: #e5d5c0; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <!-- CLIENT INFORMATION SECTION - PERSISTENT ON TOP OF ALL PAGES -->
+  <div class="client-info-bar" id="clientInfoBar">
+    <div class="client-badge">
+      <div class="client-info-field">
+        <label>👤 CLIENT NAME</label>
+        <span id="clientNameDisplay">—</span>
+        <input type="text" id="clientNameInput" placeholder="Enter client name" style="display:none;" value="">
+      </div>
+      <div class="client-info-field">
+        <label>🏙️ CITY</label>
+        <span id="clientCityDisplay">—</span>
+        <input type="text" id="clientCityInput" placeholder="City" style="display:none;" value="">
+      </div>
+      <div class="client-info-field">
+        <label>📱 MOBILE NO</label>
+        <span id="clientMobileDisplay">—</span>
+        <input type="tel" id="clientMobileInput" placeholder="+91 XXXXX XXXXX" style="display:none;" value="">
+      </div>
+      <div class="client-info-field">
+        <label>🎓 REF. DEGREE</label>
+        <span id="clientDegreeDisplay">—</span>
+        <input type="text" id="clientDegreeInput" placeholder="B.Arch / Vastu Consultant" style="display:none;" value="">
+      </div>
+    </div>
+    <button class="edit-client-btn" id="editClientBtn">✏️ Edit Details</button>
+  </div>
+
+  <header>
+    <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size:28px;">🏠</span><h1>Vastu Planner - Shakti Chakra Alignment</h1></div>
+    <div class="header-controls">
+      <button class="header-btn" onclick="showHelpPanel()">📖 Help</button>
+      <button class="header-btn btn-success" onclick="exportStepByStepPDF()">📑 Export PDF Report</button>
+      <button class="header-btn btn-success" onclick="exportEditablePPT()">📊 Export PPT Report</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div>
+      <div class="canvas-wrapper" id="canvas-wrapper">
+        <canvas id="canvas" width="1000" height="800"></canvas>
+      </div>
+      <div class="toolbar">
+        <button class="tool-btn" id="snap-btn" onclick="toggleSnap()">📌 Snap (Off)</button>
+        <button class="tool-btn" id="measure-btn" onclick="toggleMeasureMode()">📏 Measure</button>
+        <button class="tool-btn" id="grid-btn" onclick="toggleGrid()">🔲 Show Grid</button>
+        <button class="tool-btn" id="compass-btn" onclick="toggleCompass()">🧭 Compass</button>
+        <button class="tool-btn" id="vastu-grid-btn" onclick="toggleVastuGrid()">🕉️ 16 Dir Grid</button>
+      </div>
+      <div id="measure-panel" class="info-box" style="display:none;"><strong>📏 Measurements</strong><div id="measure-list" style="margin-top: 8px;"></div><button onclick="clearMeasurements()" class="btn-secondary" style="margin-top:8px;">Clear Measurements</button></div>
+      <div class="button-group">
+        <button onclick="uploadFloorPlan()" class="btn-primary">📤 Upload Floor Plan / PDF</button>
+        <button onclick="uploadShaktiChakra()" class="btn-secondary">🌀 Upload Shakti Chakra</button>
+        <button onclick="autoDetectBoundary()" class="btn-primary">🔍 Auto Detect Boundary</button>
+        <button onclick="computeCenter()" class="btn-primary">🔴 Mark Brahmasthan</button>
+        <button onclick="toggleFullScreen()" class="btn-secondary">⛶ Maximize Canvas</button>
+        <button onclick="toggleDevtas()" id="devta-btn" class="btn-secondary">🕉️ Show Devtas</button>
+        <button onclick="downloadImage()" class="btn-secondary">💾 Download Image</button>
+        <button onclick="undoAction()" class="btn-secondary">↩️ Undo</button>
+        <button onclick="redoAction()" class="btn-secondary">↪️ Redo</button>
+        <button onclick="clearAll()" class="btn-danger">🗑️ Clear All</button>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL - COMPLETE FEATURES -->
+    <div class="right-panel">
+      <div id="status" class="status">✅ Ready • Client info shown on top • PDF includes client details</div>
+
+      <div class="info-box" style="background: linear-gradient(135deg, #f3e8ff, #e9d5ff);">
+        <strong>📄 Export Options + Client Info</strong>
+        <p style="font-size: 12px; margin: 10px 0;">Client details appear on every report page automatically!</p>
+        <button onclick="exportStepByStepPDF()" class="btn-primary" style="margin-bottom: 8px; width: 100%;">📑 Export Step-by-Step PDF (w/ Client Details)</button>
+        <button onclick="exportEditablePPT()" class="btn-success" style="width: 100%;">📊 Export Step-by-Step PPT (w/ Client Details)</button>
+        <small class="small-note">Client Name, City, Mobile, Reference Degree are embedded in each exported page header.</small>
+      </div>
+
+      <div class="info-box">
+        <h3 style="font-size: 16px; margin-bottom: 10px;">📍 Boundary Points (<span id="point-count">0</span>)</h3>
+        <div id="points-list" style="max-height: 200px; overflow-y: auto;"></div>
+      </div>
+
+      <div class="info-box">
+        <strong>🎨 Layer Controls</strong>
+        <div class="layer-group">
+          <label><input type="checkbox" id="layer-floor" checked onchange="toggleLayer('floor')"> Floor Plan</label>
+          <label><input type="checkbox" id="layer-points" checked onchange="toggleLayer('points')"> Boundary Points</label>
+          <label><input type="checkbox" id="layer-devtas" checked onchange="toggleLayer('devtas')"> Devtas</label>
+          <label><input type="checkbox" id="layer-chakra" checked onchange="toggleLayer('chakra')"> Shakti Chakra</label>
+          <label><input type="checkbox" id="layer-reference" checked onchange="toggleLayer('reference')"> Reference Line</label>
+          <label><input type="checkbox" id="layer-brahmasthan" checked onchange="toggleLayer('brahmasthan')"> Brahmasthan</label>
+          <label><input type="checkbox" id="layer-vastugrid" checked onchange="toggleLayer('vastugrid')"> Vastu Grid</label>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>🔄 Floor Plan Controls</strong>
+        <div style="margin-top: 10px;">Floor Rotation: <strong><span id="floor-rotate-val">0</span>°</strong></div>
+        <input type="range" id="floor-rotate" min="0" max="360" value="0" oninput="updateFloorRotation()">
+        <input type="number" id="floor-rotate-number" value="0" style="margin-top:6px;" oninput="syncFloorNumberToSlider(this.value)">
+      </div>
+
+      <div class="info-box" id="chakra-controls" style="display:none;">
+        <strong>🌀 Shakti Chakra Controls (MASTER REFERENCE)</strong>
+        <div style="background: #fef3c7; padding: 8px; border-radius: 6px; margin: 10px 0; font-size: 12px;">⚡ <strong>IMPORTANT:</strong> Shakti Chakra's North (0°) points to TOP of image.</div>
+        <div>Zoom: <strong><span id="zoom-val">150</span>%</strong> <button onclick="zoomShakti(-30)" class="btn-secondary" style="width:auto;">−</button> <button onclick="zoomShakti(30)" class="btn-secondary" style="width:auto;">+</button> <button onclick="resetZoom()" class="btn-secondary" style="width:auto;">Reset</button></div>
+        <div>Rotate Chakra: <strong><span id="chakra-rotate-val">0</span>°</strong><input type="range" id="chakra-rotate" min="0" max="360" value="0" oninput="updateChakraRotation()"></div>
+        <div>North Line Length: <strong><span id="north-length-val">380</span>px</strong><input type="range" id="north-length" min="100" max="800" value="380" oninput="updateNorthLength()"></div>
+        <div>Devta Offset: <strong><span id="devta-rotate-val">0</span>°</strong><input type="range" id="devta-rotate" min="-180" max="180" value="0" oninput="updateDevtaRotation()"></div>
+        <div>Reference Line Rotation: <strong><span id="ref-rotate-val">0</span>°</strong><input type="range" id="ref-rotate" min="0" max="360" value="0" oninput="updateRefRotation()"></div>
+      </div>
+      <div class="info-box" id="vastu-controls" style="display:none;">
+        <strong>🕉️ 16 Direction Vastu Grid</strong>
+        <div>Grid Offset: <strong><span id="vastu-grid-offset-val">0</span>°</strong><input type="range" id="vastu-grid-offset" min="-180" max="180" value="0" oninput="updateGridOffset()"></div>
+        <div>Opacity: <strong><span id="vastu-opacity-val">35</span>%</strong><input type="range" id="vastu-opacity" min="20" max="80" value="35" oninput="updateVastuOpacity()"></div>
+        <button onclick="resetGridOffset()" class="btn-secondary">Reset Grid Offset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="help-panel" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 12px; padding: 20px; max-width: 450px; z-index: 10001; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+  <h3>📖 Client Info & Vastu System</h3>
+  <p>Client details (Name, City, Mobile, Ref Degree) appear at the top of ALL pages. Edit anytime using <strong>✏️ Edit Details</strong> button. PDF/PPT exports automatically include client info on every page!</p>
+  <button onclick="closeHelpPanel()" class="btn-primary" style="width: 100%; margin-top: 15px;">Got it!</button>
+</div>
+
+<div id="export-progress" class="export-progress" style="display:none;">
+  <h3>📄 Exporting Report...</h3>
+  <p id="export-status">Preparing...</p>
+  <div class="progress-bar"><div id="export-progress-fill" class="progress-fill" style="width: 0%;"></div></div>
+</div>
+
+<script>
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+  
+  // Client info management (persistent)
+  let clientData = {
+    name: '',
+    city: '',
+    mobile: '',
+    degree: ''
+  };
+  
+  // Load from localStorage if exists
+  function loadClientData() {
+    const saved = localStorage.getItem('vastu_client_info');
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        clientData = data;
+      } catch(e) {}
+    }
+    updateClientDisplay();
+  }
+  function saveClientData() {
+    localStorage.setItem('vastu_client_info', JSON.stringify(clientData));
+    updateClientDisplay();
+  }
+  function updateClientDisplay() {
+    document.getElementById('clientNameDisplay').textContent = clientData.name || '—';
+    document.getElementById('clientCityDisplay').textContent = clientData.city || '—';
+    document.getElementById('clientMobileDisplay').textContent = clientData.mobile || '—';
+    document.getElementById('clientDegreeDisplay').textContent = clientData.degree || '—';
+    // sync input values
+    document.getElementById('clientNameInput').value = clientData.name || '';
+    document.getElementById('clientCityInput').value = clientData.city || '';
+    document.getElementById('clientMobileInput').value = clientData.mobile || '';
+    document.getElementById('clientDegreeInput').value = clientData.degree || '';
+  }
+  function enableClientEdit(enable) {
+    const inputs = ['clientNameInput', 'clientCityInput', 'clientMobileInput', 'clientDegreeInput'];
+    const spans = ['clientNameDisplay', 'clientCityDisplay', 'clientMobileDisplay', 'clientDegreeDisplay'];
+    if (enable) {
+      inputs.forEach(id => document.getElementById(id).style.display = 'inline-block');
+      spans.forEach(id => document.getElementById(id).style.display = 'none');
+      document.getElementById('editClientBtn').textContent = '💾 Save Details';
+    } else {
+      // save from inputs
+      clientData.name = document.getElementById('clientNameInput').value.trim();
+      clientData.city = document.getElementById('clientCityInput').value.trim();
+      clientData.mobile = document.getElementById('clientMobileInput').value.trim();
+      clientData.degree = document.getElementById('clientDegreeInput').value.trim();
+      saveClientData();
+      inputs.forEach(id => document.getElementById(id).style.display = 'none');
+      spans.forEach(id => document.getElementById(id).style.display = 'inline');
+      document.getElementById('editClientBtn').textContent = '✏️ Edit Details';
+      showToast('Client details saved!');
+    }
+  }
+  document.getElementById('editClientBtn').addEventListener('click', () => {
+    const isEditing = document.getElementById('clientNameInput').style.display === 'inline-block';
+    enableClientEdit(!isEditing);
+  });
+  
+  // Canvas & Vastu Logic (preserved all original functionality)
+  let canvas = document.getElementById('canvas');
+  let ctx = canvas.getContext('2d');
+  let floorImage = null, shaktiImage = null, floorRotation = 0, points = [], history = [], redoStack = [], currentCenter = null, draggingIndex = -1;
+  let showDevtas = false, snapEnabled = false, measureMode = false, measurePoints = [], measurements = [], showGrid = false, showCompass = false, showVastuGrid = false;
+  let chakraBaseSize = 280, zoomLevel = 150, chakraRotation = 0, devtaOffset = 0, northLineLength = 380, referenceRotation = 0, referenceLength = 400, referenceDarkness = 220;
+  let gridOffset = 0, vastuGridOpacity = 35, showGridLabels = true, showCardinalOnly = false, masterAlignmentOffset = -90;
+  let layers = { floor: true, points: true, devtas: true, chakra: true, reference: true, brahmasthan: true, vastugrid: true };
+  let devtas = [{name:"Kubera",angle:0,dist:1.25,color:"#eab308",direction:"North"},{name:"Ishana",angle:45,dist:1.35,color:"#3b82f6",direction:"Northeast"},{name:"Indra",angle:90,dist:1.25,color:"#3b82f6",direction:"East"},{name:"Agni",angle:135,dist:1.35,color:"#ef4444",direction:"Southeast"},{name:"Yama",angle:180,dist:1.25,color:"#3b82f6",direction:"South"},{name:"Nirriti",angle:225,dist:1.35,color:"#3b82f6",direction:"Southwest"},{name:"Varuna",angle:270,dist:1.25,color:"#3b82f6",direction:"West"},{name:"Vayu",angle:315,dist:1.35,color:"#3b82f6",direction:"Northwest"},{name:"Brahma",angle:0,dist:0.25,color:"#eab308",direction:"Center"}];
+  const vastuDirections16 = [{name:"N",angle:0,cardinal:true},{name:"NNE",angle:22.5,cardinal:false},{name:"NE",angle:45,cardinal:false},{name:"ENE",angle:67.5,cardinal:false},{name:"E",angle:90,cardinal:true},{name:"ESE",angle:112.5,cardinal:false},{name:"SE",angle:135,cardinal:false},{name:"SSE",angle:157.5,cardinal:false},{name:"S",angle:180,cardinal:true},{name:"SSW",angle:202.5,cardinal:false},{name:"SW",angle:225,cardinal:false},{name:"WSW",angle:247.5,cardinal:false},{name:"W",angle:270,cardinal:true},{name:"WNW",angle:292.5,cardinal:false},{name:"NW",angle:315,cardinal:false},{name:"NNW",angle:337.5,cardinal:false}];
+  function showToast(msg) { let t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
+  function setStatus(msg,type='success'){ let s=document.getElementById('status'); s.innerHTML=msg; s.className=`status ${type}`; }
+  function getCompassRotation(){ return (chakraRotation+masterAlignmentOffset+360)%360; }
+  function getFinalDevtaRotation(){ return (chakraRotation+masterAlignmentOffset+devtaOffset+360)%360; }
+  function getFinalGridRotation(){ return (chakraRotation+masterAlignmentOffset+gridOffset+360)%360; }
+  function pushHistory(){ history.push(JSON.stringify({points,currentCenter,showDevtas,zoomLevel,chakraRotation,devtaOffset,northLineLength,referenceRotation,referenceLength,referenceDarkness,floorRotation,layers,gridOffset,vastuGridOpacity})); redoStack=[]; if(history.length>50) history.shift(); }
+  function restoreState(snap){ const data=JSON.parse(snap); points=data.points||[]; currentCenter=data.currentCenter||null; showDevtas=data.showDevtas||false; zoomLevel=data.zoomLevel??150; chakraRotation=data.chakraRotation??0; devtaOffset=data.devtaOffset??0; northLineLength=data.northLineLength??380; referenceRotation=data.referenceRotation??0; referenceLength=data.referenceLength??400; referenceDarkness=data.referenceDarkness??220; floorRotation=data.floorRotation??0; layers=data.layers||layers; gridOffset=data.gridOffset??0; vastuGridOpacity=data.vastuGridOpacity??35; syncControls(); redraw(); }
+  window.undoAction=function(){ if(!history.length) return showToast("Nothing to undo"); const snap=history.pop(); redoStack.push(JSON.stringify({points,currentCenter,showDevtas,zoomLevel,chakraRotation,devtaOffset,northLineLength,referenceRotation,referenceLength,referenceDarkness,floorRotation,layers,gridOffset,vastuGridOpacity})); restoreState(snap); setStatus('↩️ Undo'); };
+  window.redoAction=function(){ if(!redoStack.length) return; const snap=redoStack.pop(); history.push(JSON.stringify({points,currentCenter,showDevtas,zoomLevel,chakraRotation,devtaOffset,northLineLength,referenceRotation,referenceLength,referenceDarkness,floorRotation,layers,gridOffset,vastuGridOpacity})); restoreState(snap); setStatus('↪️ Redo'); };
+  function syncControls(){
+    document.getElementById('zoom-val').textContent=zoomLevel; document.getElementById('chakra-rotate').value=chakraRotation; document.getElementById('chakra-rotate-val').textContent=chakraRotation;
+    document.getElementById('devta-rotate').value=devtaOffset; document.getElementById('devta-rotate-val').textContent=devtaOffset; document.getElementById('north-length').value=northLineLength; document.getElementById('north-length-val').textContent=northLineLength;
+    document.getElementById('ref-rotate').value=referenceRotation; document.getElementById('ref-rotate-val').textContent=referenceRotation; document.getElementById('floor-rotate').value=floorRotation; document.getElementById('floor-rotate-val').textContent=floorRotation;
+    document.getElementById('devta-btn').textContent=showDevtas?'🕉️ Hide Devtas':'🕉️ Show Devtas'; ['floor','points','devtas','chakra','reference','brahmasthan','vastugrid'].forEach(l=>document.getElementById(`layer-${l}`).checked=layers[l]);
+    document.getElementById('snap-btn').textContent=snapEnabled?'📌 Snap (On)':'📌 Snap (Off)'; document.getElementById('measure-btn').textContent=measureMode?'📏 Measure (On)':'📏 Measure'; document.getElementById('measure-panel').style.display=measureMode?'block':'none';
+    document.getElementById('compass-btn').textContent=showCompass?'🧭 Hide Compass':'🧭 Compass'; document.getElementById('grid-btn').textContent=showGrid?'🔲 Hide Grid':'🔲 Show Grid'; document.getElementById('vastu-grid-btn').textContent=showVastuGrid?'🕉️ Hide 16 Dir Grid':'🕉️ 16 Dir Grid';
+    document.getElementById('vastu-controls').style.display=showVastuGrid?'block':'none'; document.getElementById('vastu-grid-offset').value=gridOffset; document.getElementById('vastu-grid-offset-val').textContent=gridOffset; document.getElementById('vastu-opacity').value=vastuGridOpacity;
+  }
+  window.toggleSnap=function(){ snapEnabled=!snapEnabled; syncControls(); redraw(); };
+  window.toggleMeasureMode=function(){ measureMode=!measureMode; if(!measureMode){ measurePoints=[]; document.getElementById('measure-list').innerHTML=''; } syncControls(); redraw(); };
+  window.toggleGrid=function(){ showGrid=!showGrid; syncControls(); redraw(); };
+  window.toggleCompass=function(){ showCompass=!showCompass; syncControls(); redraw(); };
+  window.toggleVastuGrid=function(){ showVastuGrid=!showVastuGrid; syncControls(); redraw(); };
+  window.toggleLayer=function(n){ layers[n]=!layers[n]; redraw(); };
+  window.updateGridOffset=function(){ gridOffset=parseInt(document.getElementById('vastu-grid-offset').value)||0; syncControls(); redraw(); };
+  window.resetGridOffset=function(){ gridOffset=0; syncControls(); redraw(); };
+  window.updateVastuOpacity=function(){ vastuGridOpacity=parseInt(document.getElementById('vastu-opacity').value)||35; syncControls(); redraw(); };
+  function redraw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(layers.floor&&floorImage){ ctx.save(); ctx.translate(canvas.width/2,canvas.height/2); ctx.rotate(floorRotation*Math.PI/180); ctx.drawImage(floorImage,-canvas.width/2,-canvas.height/2,canvas.width,canvas.height); ctx.restore(); }
+    if(showGrid){ ctx.save(); ctx.strokeStyle='#ccc'; ctx.lineWidth=0.5; for(let x=0;x<canvas.width;x+=50){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); } for(let y=0;y<canvas.height;y+=50){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); } ctx.restore(); }
+    if(showVastuGrid&&currentCenter){ let rot=getFinalGridRotation(); ctx.save(); ctx.translate(currentCenter.x,currentCenter.y); ctx.rotate(rot*Math.PI/180); let maxDist=Math.max(canvas.width,canvas.height)*0.9; let op= vastuGridOpacity/100; vastuDirections16.forEach(dir=>{ let rad=dir.angle*Math.PI/180; ctx.beginPath(); ctx.moveTo(Math.cos(rad)*30,Math.sin(rad)*30); ctx.lineTo(Math.cos(rad)*maxDist,Math.sin(rad)*maxDist); ctx.strokeStyle=`rgba(100,100,100,${dir.cardinal?0.6*op:0.25*op})`; ctx.lineWidth=dir.cardinal?2.5:1; ctx.stroke(); }); ctx.restore(); }
+    if(layers.points&&points.length>1){ ctx.beginPath(); ctx.moveTo(points[0].x,points[0].y); for(let i=1;i<points.length;i++) ctx.lineTo(points[i].x,points[i].y); ctx.closePath(); ctx.strokeStyle='#0ea5e9'; ctx.lineWidth=5; ctx.stroke(); points.forEach((p,i)=>{ ctx.fillStyle='#ef4444'; ctx.beginPath(); ctx.arc(p.x,p.y,7,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#fff'; ctx.font='bold 12px Inter'; ctx.fillText((i+1).toString(),p.x+12,p.y-6); }); }
+    if(layers.brahmasthan&&currentCenter){ ctx.strokeStyle='#b91c1c'; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(currentCenter.x-30,currentCenter.y); ctx.lineTo(currentCenter.x+30,currentCenter.y); ctx.moveTo(currentCenter.x,currentCenter.y-30); ctx.lineTo(currentCenter.x,currentCenter.y+30); ctx.stroke(); ctx.beginPath(); ctx.arc(currentCenter.x,currentCenter.y,14,0,Math.PI*2); ctx.stroke(); ctx.fillStyle='#b91c1c'; ctx.font='bold 14px Inter'; ctx.fillText('BRAHMASTHAN',currentCenter.x+35,currentCenter.y); }
+    if(layers.reference&&currentCenter){ ctx.save(); ctx.translate(currentCenter.x,currentCenter.y); ctx.rotate(referenceRotation*Math.PI/180); ctx.strokeStyle=`rgba(59,130,246,${Math.max(0.15,referenceDarkness/400)})`; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-referenceLength); ctx.stroke(); ctx.fillStyle=`rgba(59,130,246,${Math.max(0.15,referenceDarkness/400)})`; ctx.beginPath(); ctx.moveTo(0,-referenceLength); ctx.lineTo(-8,-referenceLength+18); ctx.lineTo(8,-referenceLength+18); ctx.fill(); ctx.restore(); }
+    if(layers.chakra&&shaktiImage&&currentCenter){ ctx.save(); ctx.translate(currentCenter.x,currentCenter.y); ctx.rotate(chakraRotation*Math.PI/180); ctx.strokeStyle='#991111'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(0,-northLineLength); ctx.lineTo(0,northLineLength); ctx.stroke(); let sz=chakraBaseSize*(zoomLevel/100); ctx.drawImage(shaktiImage,-sz/2,-sz/2,sz,sz); ctx.restore(); }
+    if(layers.devtas&&showDevtas&&currentCenter){ ctx.save(); ctx.translate(currentCenter.x,currentCenter.y); ctx.rotate(getFinalDevtaRotation()*Math.PI/180); let sz=135*(zoomLevel/100); devtas.forEach(d=>{ let rad=d.angle*Math.PI/180; let dist=d.dist*sz; let x=Math.cos(rad)*dist,y=Math.sin(rad)*dist; ctx.fillStyle=d.color; ctx.beginPath(); ctx.arc(x,y,7,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#111'; ctx.font='10px Inter'; ctx.fillText(d.name,x,y+20); }); ctx.restore(); }
+    if(showCompass&&currentCenter){ ctx.save(); ctx.translate(currentCenter.x,currentCenter.y); ctx.rotate(getCompassRotation()*Math.PI/180); ctx.beginPath(); ctx.arc(0,0,55,0,Math.PI*2); ctx.strokeStyle='#666'; ctx.lineWidth=2; ctx.stroke(); ctx.fillStyle='rgba(255,255,255,0.85)'; ctx.fill(); ['N','NE','E','SE','S','SW','W','NW'].forEach((d,i)=>{ let rad=i*45*Math.PI/180; let x=Math.cos(rad)*40,y=Math.sin(rad)*40; ctx.fillStyle=d==='N'?'#ef4444':'#555'; ctx.font='bold 12px Inter'; ctx.fillText(d,x,y); }); ctx.restore(); }
+    document.getElementById('point-count').textContent=points.length; if(points.length) renderPointsList();
+  }
+  function renderPointsList(){ let html=points.length===0?'<p style="color:#888;">No points.</p>':'<table><thead><tr><th>#</th><th>X</th><th>Y</th></tr></thead><tbody>'+points.map((p,i)=>`<tr><td>${i+1}</td><td><input type="number" value="${p.x.toFixed(1)}" data-index="${i}" data-field="x" style="width:70px"></td><td><input type="number" value="${p.y.toFixed(1)}" data-index="${i}" data-field="y" style="width:70px"></td><td><button onclick="deletePoint(${i})">🗑</button></td></tr>`).join('')+'</tbody></table>'; document.getElementById('points-list').innerHTML=html; document.querySelectorAll('#points-list input').forEach(inp=>inp.addEventListener('change',(e)=>{let i=parseInt(e.target.dataset.index),field=e.target.dataset.field,val=parseFloat(e.target.value); if(!isNaN(i)&&points[i]){ pushHistory(); points[i][field]=val; currentCenter=null; redraw(); }}));}
+  window.deletePoint=function(i){ if(confirm('Delete?')){ pushHistory(); points.splice(i,1); currentCenter=null; redraw(); }};
+  window.autoDetectBoundary=function(){ if(!floorImage) return alert('Upload floor plan'); pushHistory(); const temp=document.createElement('canvas'); temp.width=canvas.width; temp.height=canvas.height; const tctx=temp.getContext('2d'); tctx.drawImage(floorImage,0,0); const data=tctx.getImageData(0,0,canvas.width,canvas.height).data; let edges=[]; for(let y=1;y<canvas.height-1;y++) for(let x=1;x<canvas.width-1;x++){ let idx=y*canvas.width+x; let grad=Math.abs(data[(idx+1)*4]-data[(idx-1)*4])+Math.abs(data[(idx+canvas.width)*4]-data[(idx-canvas.width)*4]); if(grad>58) edges.push({x,y}); } if(edges.length<30) return alert('Boundary detection failed'); let left=edges.reduce((a,b)=>a.x<b.x?a:b),right=edges.reduce((a,b)=>a.x>b.x?a:b),top=edges.reduce((a,b)=>a.y<b.y?a:b),bottom=edges.reduce((a,b)=>a.y>b.y?a:b); points=[{x:left.x,y:left.y},{x:top.x,y:top.y},{x:right.x,y:right.y},{x:bottom.x,y:bottom.y}]; currentCenter=null; redraw(); setStatus('Boundary detected'); };
+  window.computeCenter=function(){ if(points.length<3) return alert('Need ≥3 points'); pushHistory(); let n=points.length,area=0,cx=0,cy=0; for(let i=0;i<n;i++){ let j=(i+1)%n; let cross=points[i].x*points[j].y-points[j].x*points[i].y; area+=cross; cx+=(points[i].x+points[j].x)*cross; cy+=(points[i].y+points[j].y)*cross; } area/=2; if(Math.abs(area)<1) return; currentCenter={x:cx/(6*area),y:cy/(6*area)}; setStatus('Brahmasthan marked'); redraw(); };
+  window.toggleDevtas=function(){ if(!currentCenter) return alert('Mark Brahmasthan first'); if(!shaktiImage) return alert('Upload Shakti Chakra'); showDevtas=!showDevtas; syncControls(); redraw(); };
+  function getMousePos(e){ let rect=canvas.getBoundingClientRect(); return {x:(e.clientX-rect.left)*(canvas.width/rect.width),y:(e.clientY-rect.top)*(canvas.height/rect.height)}; }
+  canvas.addEventListener('mousedown',e=>{ if(e.button===2){ e.preventDefault(); let pos=getMousePos(e); for(let i=0;i<points.length;i++) if(Math.hypot(points[i].x-pos.x,points[i].y-pos.y)<20){ deletePoint(i); return false; } return false; } let pos=getMousePos(e); if(measureMode){ measurePoints.push(pos); if(measurePoints.length===2){ let dist=Math.hypot(measurePoints[0].x-measurePoints[1].x,measurePoints[0].y-measurePoints[1].y).toFixed(1); let div=document.createElement('div'); div.innerHTML=`📏 ${dist}px <button onclick="this.remove()">✖</button>`; document.getElementById('measure-list').appendChild(div); measurePoints=[]; }else showToast('Click second point'); return; } if(!floorImage||currentCenter) return; for(let i=0;i<points.length;i++) if(Math.hypot(points[i].x-pos.x,points[i].y-pos.y)<20){ draggingIndex=i; return; } pushHistory(); points.push(pos); redraw(); });
+  canvas.addEventListener('mousemove',e=>{ if(draggingIndex!==-1){ let pos=getMousePos(e); points[draggingIndex].x=Math.max(0,Math.min(pos.x,canvas.width)); points[draggingIndex].y=Math.max(0,Math.min(pos.y,canvas.height)); currentCenter=null; redraw(); } });
+  canvas.addEventListener('mouseup',()=>draggingIndex=-1);
+  window.uploadFloorPlan=function(){ let inp=document.createElement('input'); inp.type='file'; inp.accept='image/*,.pdf'; inp.onchange=e=>{ if(e.target.files[0]){ let file=e.target.files[0]; if(file.type==='application/pdf'){ let reader=new FileReader(); reader.onload=async ev=>{ let pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(ev.target.result)}).promise; let page=await pdf.getPage(1); let viewport=page.getViewport({scale:1.8}); let off=document.createElement('canvas'); off.width=Math.ceil(viewport.width); off.height=Math.ceil(viewport.height); await page.render({canvasContext:off.getContext('2d'),viewport}).promise; let img=new Image(); img.onload=()=>{ canvas.width=img.width; canvas.height=img.height; floorImage=img; points=[]; currentCenter=null; setStatus('Floor plan loaded'); redraw(); pushHistory(); }; img.src=off.toDataURL(); }; reader.readAsArrayBuffer(file); } else { let fr=new FileReader(); fr.onload=ev=>{ let img=new Image(); img.onload=()=>{ canvas.width=img.width; canvas.height=img.height; floorImage=img; points=[]; currentCenter=null; setStatus('Floor loaded'); redraw(); pushHistory(); }; img.src=ev.target.result; }; fr.readAsDataURL(file); } } }; inp.click(); };
+  window.uploadShaktiChakra=function(){ let inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.onchange=e=>{ let fr=new FileReader(); fr.onload=ev=>{ let img=new Image(); img.onload=()=>{ shaktiImage=img; localStorage.setItem('shaktiChakra',ev.target.result); document.getElementById('chakra-controls').style.display='block'; setStatus('Shakti Chakra loaded'); redraw(); }; img.src=ev.target.result; }; fr.readAsDataURL(e.target.files[0]); }; inp.click(); };
+  window.updateChakraRotation=function(){ chakraRotation=parseInt(document.getElementById('chakra-rotate').value)||0; syncControls(); redraw(); };
+  window.updateDevtaRotation=function(){ devtaOffset=parseInt(document.getElementById('devta-rotate').value)||0; syncControls(); redraw(); };
+  window.updateNorthLength=function(){ northLineLength=parseInt(document.getElementById('north-length').value)||380; syncControls(); redraw(); };
+  window.updateRefRotation=function(){ referenceRotation=parseInt(document.getElementById('ref-rotate').value)||0; syncControls(); redraw(); };
+  window.updateFloorRotation=function(){ floorRotation=parseInt(document.getElementById('floor-rotate').value)||0; syncControls(); redraw(); };
+  window.zoomShakti=function(delta){ zoomLevel=Math.max(30,Math.min(1000,zoomLevel+delta)); syncControls(); redraw(); };
+  window.resetZoom=function(){ zoomLevel=150; syncControls(); redraw(); };
+  window.downloadImage=function(){ if(!floorImage) return; let link=document.createElement('a'); link.download=`vastu-${Date.now()}.png`; link.href=canvas.toDataURL(); link.click(); };
+  window.clearAll=function(){ if(confirm('Clear everything?')){ points=[]; history=[]; currentCenter=null; showDevtas=false; floorRotation=0; chakraRotation=0; devtaOffset=0; redraw(); syncControls(); setStatus('Cleared'); } };
+  window.toggleFullScreen=()=>{ let w=document.getElementById('canvas-wrapper'); if(!document.fullscreenElement) w.requestFullscreen(); else document.exitFullscreen(); };
+  window.clearMeasurements=function(){ measurements=[]; document.getElementById('measure-list').innerHTML=''; redraw(); };
+  window.showHelpPanel=function(){ document.getElementById('help-panel').style.display='block'; };
+  window.closeHelpPanel=function(){ document.getElementById('help-panel').style.display='none'; };
+  async function captureImageForStep(layerSettings,compassVal,vastuVal,devtasVal){ return new Promise(resolve=>{ let origLayers={...layers},origCompass=showCompass,origVastu=showVastuGrid,origDevtas=showDevtas; Object.assign(layers,layerSettings); showCompass=compassVal; showVastuGrid=vastuVal; showDevtas=devtasVal; redraw(); setTimeout(()=>{ let data=canvas.toDataURL('image/png'); Object.assign(layers,origLayers); showCompass=origCompass; showVastuGrid=origVastu; showDevtas=origDevtas; redraw(); resolve(data); },150); }); }
+  function addClientHeaderToPDF(pdf, pageWidth, pageHeight, margin){ let clientText=`Client: ${clientData.name || '—'}  |  City: ${clientData.city || '—'}  |  Mobile: ${clientData.mobile || '—'}  |  Ref. Degree: ${clientData.degree || '—'}`; pdf.setFontSize(9); pdf.setTextColor(70,70,100); pdf.text(clientText, pageWidth/2, margin-2, {align:'center'}); pdf.setDrawColor(194,65,15); pdf.setLineWidth(0.5); pdf.line(margin, margin+3, pageWidth-margin, margin+3); }
+  window.exportStepByStepPDF=async function(){ if(!floorImage||points.length===0||!currentCenter){ alert('Need floor plan, boundaries & center point'); return; } showExportProgress(true,'Preparing PDF...',0); try{ let {jsPDF}=window.jspdf; let pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'}); let pageWidth=pdf.internal.pageSize.getWidth(),pageHeight=pdf.internal.pageSize.getHeight(),margin=15; let steps=[{name:'Floor Plan',layers:{floor:true,points:false,brahmasthan:false,chakra:false,reference:false,vastugrid:false},compass:false,vastu:false,devtas:false,sub:'Original plan'},{name:'Boundary Detection',layers:{floor:true,points:true,brahmasthan:false,chakra:false,reference:false,vastugrid:false},compass:false,vastu:false,devtas:false,sub:`${points.length} points`},{name:'Brahmasthan Center',layers:{floor:true,points:true,brahmasthan:true,chakra:false,reference:false,vastugrid:false},compass:false,vastu:false,devtas:false,sub:`Center (${currentCenter.x.toFixed(0)},${currentCenter.y.toFixed(0)})`},{name:'All Alignments + Reference',layers:{floor:true,points:true,brahmasthan:true,chakra:true,reference:true,vastugrid:true},compass:true,vastu:true,devtas:false,sub:`Chakra:${chakraRotation}° Ref:${referenceRotation}°`},{name:'Final with Devtas',layers:{floor:true,points:true,brahmasthan:true,chakra:true,reference:true,vastugrid:true},compass:true,vastu:true,devtas:true,sub:'9 Devtas placed'}]; for(let i=0;i<steps.length;i++){ let s=steps[i]; showExportProgress(true,`Step ${i+1}: ${s.name}`,(i/steps.length)*80); let imgData=await captureImageForStep(s.layers,s.compass,s.vastu,s.devtas); if(i>0) pdf.addPage(); addClientHeaderToPDF(pdf,pageWidth,pageHeight,margin); let img=new Image(); await new Promise(r=>{img.onload=r; img.src=imgData;}); let maxW=pageWidth-margin*2, maxH=pageHeight-margin*2-10; let imgW=maxW, imgH=(img.height*imgW)/img.width; if(imgH>maxH){ imgH=maxH; imgW=(img.width*imgH)/img.width; } let x=(pageWidth-imgW)/2, y=(pageHeight-imgH)/2; pdf.addImage(imgData,'PNG',x,y,imgW,imgH); pdf.setFontSize(12); pdf.setTextColor(194,65,15); pdf.text(`Step ${i+1}: ${s.name}`,pageWidth/2,margin+8,{align:'center'}); pdf.setFontSize(8); pdf.setTextColor(80); pdf.text(s.sub,pageWidth/2,pageHeight-5,{align:'center'}); } pdf.save(`vastu-client-${Date.now()}.pdf`); showExportProgress(false); showToast('PDF with client info exported'); }catch(e){ showExportProgress(false); alert('PDF error'); } };
+  window.exportEditablePPT=async function(){ if(!floorImage||points.length===0||!currentCenter) return alert('Complete steps first'); showExportProgress(true,'Creating PPT...',0); try{ let PptxGenJS=window.PptxGenJS; let pptx=new PptxGenJS(); pptx.layout='LAYOUT_WIDE'; pptx.defineLayout({name:'WIDE',width:10,height:5.625}); pptx.layout='WIDE'; let steps=[{name:'Floor Plan',layers:{floor:true,points:false,brahmasthan:false,chakra:false,reference:false,vastugrid:false},compass:false,vastu:false,devtas:false},{name:'Boundary Points',layers:{floor:true,points:true,brahmasthan:false,chakra:false,reference:false,vastugrid:false},compass:false,vastu:false,devtas:false},{name:'Brahmasthan',layers:{floor:true,points:true,brahmasthan:true,chakra:false,reference:false,vastugrid:false},compass:false,vastu:false,devtas:false},{name:'All Alignments',layers:{floor:true,points:true,brahmasthan:true,chakra:true,reference:true,vastugrid:true},compass:true,vastu:true,devtas:false},{name:'Devtas Final',layers:{floor:true,points:true,brahmasthan:true,chakra:true,reference:true,vastugrid:true},compass:true,vastu:true,devtas:true}]; for(let i=0;i<steps.length;i++){ let s=steps[i]; let imgData=await captureImageForStep(s.layers,s.compass,s.vastu,s.devtas); let slide=pptx.addSlide(); let clientHeader=`${clientData.name||'Client'} | ${clientData.city||'City'} | ${clientData.mobile||''} | ${clientData.degree||''}`; slide.addText(clientHeader,{x:0.3,y:0.2,w:9.4,h:0.4,fontSize:9,color:'1E3A5F',bold:true}); slide.addImage({data:imgData,x:0.5,y:0.8,w:9,h:4.2}); slide.addText(`Step ${i+1}: ${s.name}`,{x:0.5,y:0.45,w:9,h:0.4,fontSize:16,bold:true,color:'C2410F'}); } await pptx.writeFile({fileName:`vastu-report-${Date.now()}.pptx`}); showExportProgress(false); showToast('PPT exported'); }catch(e){ showExportProgress(false); alert('PPT error'); } };
+  function showExportProgress(show,msg,progress){ let div=document.getElementById('export-progress'); if(show){ div.style.display='block'; if(msg) document.getElementById('export-status').textContent=msg; if(progress!==undefined) document.getElementById('export-progress-fill').style.width=progress+'%'; } else div.style.display='none'; }
+  loadClientData(); let savedShakti=localStorage.getItem('shaktiChakra'); if(savedShakti){ let img=new Image(); img.onload=()=>{ shaktiImage=img; document.getElementById('chakra-controls').style.display='block'; redraw(); }; img.src=savedShakti; }
+  initCanvas: (()=>{ syncControls(); setStatus('Client info ready. Upload floor plan.'); redraw(); })();
+</script>
+</body>
+</html>
+```
